@@ -1,50 +1,51 @@
 from GeneticA.individual import Individual
 
-
+# a = GA(50, [-100], [100])
+#needs function to optimise, number of iterations as well as pop size and search space
 class GA:
 
-    def __init__(self, pop_size):
+    def __init__(self, pop_size, lower_bound, upper_bound, func, num_iterations):
 
-        population = []
-        for i in range(0, pop_size):
-            population.append(Individual)
+        self.func = func
+        self.num_iterations = num_iterations
+        self.population = []
+        self.pop_size = pop_size
 
-        best = None
+        for i in range(pop_size):
+            self.population.append(Individual(lower_bound, upper_bound))
 
-    def genetic_algorithm(self, pop_size, population, best):
+        self.best = None
 
-    #   How to make this run until 'best' is the ideal solution?
-    #   leave code indented for now
+    def optimise(self):
 
-        for individual in population:
+        for individual in self.population:
 
             self.assess_fitness(individual)
-            if individual.fitness > best.fitness:
-                best = individual
-            # why is none showing an error? possibly change this
-            # loop to a for i in range, then just leave below as
-            # the case where i =0
-            elif best.fitness = None:
-                best = individual
+
+            if self.best is None or individual.fitness > self.best.fitness:
+                self.best = individual
 
         new_pop = []
 
-        for i in range(pop_size/2):
+        for i in range(self.pop_size/2):
 
-            pa = self.select_with_replacement(population)
-            pb = self.select_with_replacement(population)
+            pa = self.select_with_replacement()
+            pb = self.select_with_replacement()
             ca = self.crossover(pa, pb)
             cb = self.crossover(pa, pb)
             new_pop.append(ca)
             new_pop.append(cb)
 
-        population = new_pop
+        self.population = new_pop
 
+    def assess_fitness(self, individual):
+        individual.fitness = self.func(individual.position)
 
-    def assess_fitness(self):
-
-    def crossover(self):
+    def crossover(self, pa, pb):
+        pass
 
     def mutate(self):
+        pass
 
     def select_with_replacement(self):
+        pass
