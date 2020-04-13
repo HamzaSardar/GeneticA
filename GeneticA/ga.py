@@ -1,7 +1,7 @@
 from GeneticA.individual import Individual
+import random
 
-# a = GA(50, [-100], [100])
-#needs function to optimise, number of iterations as well as pop size and search space
+
 class GA:
 
     def __init__(self, pop_size, lower_bound, upper_bound, func, num_iterations):
@@ -27,14 +27,13 @@ class GA:
 
         new_pop = []
 
-        for i in range(self.pop_size/2):
+        for i in range(self.pop_size//2):
 
             pa = self.select_with_replacement()
             pb = self.select_with_replacement()
-            ca = self.crossover(pa, pb)
-            cb = self.crossover(pa, pb)
-            new_pop.append(ca)
-            new_pop.append(cb)
+            ca, cb = self.crossover(pa, pb)
+            new_pop.append(self.mutate(ca))
+            new_pop.append(self.mutate(cb))
 
         self.population = new_pop
 
@@ -42,10 +41,18 @@ class GA:
         individual.fitness = self.func(individual.position)
 
     def crossover(self, pa, pb):
-        pass
 
-    def mutate(self):
-        pass
+        c = random.randint(1, len(pa.position))
+        if c != 1:
+            for i in range(c, len(pa.position)):
+                pa.position[i], pb.position[i] = pb.position[i], pa.position[i]
+        return pa, pb
+
+    def mutate(self, child):
+
+        for i in range(len(child.position)):
+            child.position[i] = child.position[i] * random.uniform(0.9, 1.1)
+        return child
 
     def select_with_replacement(self):
-        pass
+        return random.choice(self.population)
