@@ -1,10 +1,21 @@
-from GeneticA.individual import Individual
+from .individual import Individual
 import random
+from .selection import TournamentSelection
 
 
+'''To do list: 
+        
+        -Variable mutations
+        -Variable mutation chance
+        -Add in different selection algorithms
+        -Are you writing this for an end user to be able to input their own algorithms?
+        -Different optimisation algorithms
+        -Different crossover methods
+
+'''
 class GA:
 
-    def __init__(self, pop_size, lower_bound, upper_bound, func, num_iterations):
+    def __init__(self, pop_size, lower_bound, upper_bound, func, num_iterations, selection=None):
 
         self.func = func
         self.num_iterations = num_iterations
@@ -12,6 +23,7 @@ class GA:
         self.pop_size = pop_size
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
+        self.selection = TournamentSelection()
 
         for i in range(pop_size):
             self.population.append(Individual(lower_bound, upper_bound))
@@ -30,8 +42,10 @@ class GA:
 
             new_pop = []
             for i in range(self.pop_size//2):
-                pa = self.select_with_replacement()
-                pb = self.select_with_replacement()
+
+                pa = self.selection.select(population=self.population)
+                pb = self.selection.select(population=self.population)
+
                 ca, cb = self.crossover(pa, pb)
                 new_pop.append(self.mutate(ca))
                 new_pop.append(self.mutate(cb))
@@ -64,11 +78,12 @@ class GA:
 
         return child
 
-    def select_with_replacement(self, t=2):
+    @staticmethod
+    def tournament_selection(population, t=2):
 
-        best = random.choice(self.population)
+        best = random.choice(population)
         for i in range(1, t):
-            nxt = random.choice(self.population)
+            nxt = random.choice(population)
             if nxt.fitness < best.fitness:
                 best = nxt
         return best
