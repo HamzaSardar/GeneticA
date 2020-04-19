@@ -2,18 +2,6 @@ from .individual import Individual
 import random
 from .selection import TournamentSelection
 from .crossover import SinglePointCrossover
-
-
-'''To do list: 
-        
-        -Variable mutations
-        -Variable mutation chance
-        -Add in different selection algorithms
-        -Implement abstract base classes
-        -Different optimisation algorithms
-        -Different crossover methods
-
-'''
 class GA:
 
     def __init__(self, pop_size, lower_bound, upper_bound,
