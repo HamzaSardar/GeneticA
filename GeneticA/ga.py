@@ -1,6 +1,7 @@
 from .individual import Individual
 import random
 from .selection import TournamentSelection
+from .crossover import SinglePointCrossover
 
 
 '''To do list: 
@@ -8,14 +9,15 @@ from .selection import TournamentSelection
         -Variable mutations
         -Variable mutation chance
         -Add in different selection algorithms
-        -Are you writing this for an end user to be able to input their own algorithms?
+        -Implement abstract base classes
         -Different optimisation algorithms
         -Different crossover methods
 
 '''
 class GA:
 
-    def __init__(self, pop_size, lower_bound, upper_bound, func, num_iterations, selection=None):
+    def __init__(self, pop_size, lower_bound, upper_bound,
+                 func, num_iterations):
 
         self.func = func
         self.num_iterations = num_iterations
@@ -24,10 +26,8 @@ class GA:
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self.selection = TournamentSelection()
-
-        for i in range(pop_size):
-            self.population.append(Individual(lower_bound, upper_bound))
-
+        self.crossover = SinglePointCrossover()
+        self.initialise_population()
         self.best = None
 
     def optimise(self):
@@ -46,7 +46,8 @@ class GA:
                 pa = self.selection.select(population=self.population)
                 pb = self.selection.select(population=self.population)
 
-                ca, cb = self.crossover(pa, pb)
+                ca, cb = self.crossover.cross(pa, pb)
+
                 new_pop.append(self.mutate(ca))
                 new_pop.append(self.mutate(cb))
 
@@ -57,14 +58,6 @@ class GA:
 
     def assess_fitness(self, individual):
         individual.fitness = self.func(individual.position)
-
-    def crossover(self, pa, pb):
-
-        c = random.randint(1, len(pa.position))
-        if c != 1:
-            for i in range(c, len(pa.position)):
-                pa.position[i], pb.position[i] = pb.position[i], pa.position[i]
-        return pa, pb
 
     def mutate(self, child):
 
@@ -78,12 +71,9 @@ class GA:
 
         return child
 
-    @staticmethod
-    def tournament_selection(population, t=2):
+    def initialise_population(self):
 
-        best = random.choice(population)
-        for i in range(1, t):
-            nxt = random.choice(population)
-            if nxt.fitness < best.fitness:
-                best = nxt
-        return best
+        for i in range(self.pop_size):
+            self.population.append(
+                Individual(self.lower_bound, self.upper_bound)
+            )

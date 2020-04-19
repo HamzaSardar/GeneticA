@@ -27,3 +27,28 @@ class TournamentSelection(BaseSelection):
             if nxt.fitness < best.fitness:
                 best = nxt
         return best
+
+
+class FitnessPropSelection(BaseSelection):
+
+    def __init__(self):
+        super().__init__()
+
+    def select(self, population):
+        pop = population
+        global_f = pop.fitness
+
+        for i in global_f:
+            if i == 0:
+                i = 1
+
+        for i in range(2, len(global_f)):
+            global_f[i] = global_f[i] + global_f[i - 1]
+
+        n = random.randint(0, global_f[-1])
+        for i in range(1, len(global_f)):
+            # how to do this for minimum fitness?
+            # following feels incorrect
+            if i < len(global_f):
+                if global_f[i] < n < global_f[i + 1]:
+                    return pop[i]
