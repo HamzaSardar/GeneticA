@@ -9,7 +9,7 @@ class Individual:
             raise ValueError('yuor lowe bound and uppe bound not same lemgth')
 
         self.position = []
-        for i in range(0, len(lower_bound)):
+        for i in range(len(lower_bound)):
             self.position.append(random.uniform(lower_bound[i], upper_bound[i]))
 
         self.fitness = None
